@@ -1,5 +1,0 @@
-Jigsaw
-======
-
-
-Solve image jigsaws.
