@@ -24,12 +24,15 @@ import java.io.InputStream;
 import java.util.function.Supplier;
 
 public class TestResources {
-    public static final Supplier<InputStream> FILE_1 = () -> TestResources.class
+    public static final Supplier<InputStream> FOREST_ROAD = () -> TestResources.class
+                    .getResourceAsStream("/road-in-autumn-forest-1318271179yAn.png");
+
+    public static final Supplier<InputStream> PROPRIETARY_1 = () -> TestResources.class
                     .getResourceAsStream("/38e10b0bbad21a5915557cf78d9ff41867d4e3c0.png");
-    public static final Supplier<InputStream> FILE_2 = () -> TestResources.class
+    public static final Supplier<InputStream> PROPRIETARY_2 = () -> TestResources.class
                     .getResourceAsStream("/6593ff05d1b5d9cfbfa681d47d6948a5fccf3f5a.png");
-    public static final Supplier<InputStream> FILE_3 = () -> TestResources.class
+    public static final Supplier<InputStream> PROPRIETARY_3 = () -> TestResources.class
                     .getResourceAsStream("/7952556075c7a428c286b1d3025ab5762e70088c.png");
-    public static final Supplier<InputStream> FILE_4 = () -> TestResources.class
+    public static final Supplier<InputStream> PROPRIETARY_4 = () -> TestResources.class
                     .getResourceAsStream("/e30538c5d41121b68f20e7e245590a0114682d1e.png");
 }

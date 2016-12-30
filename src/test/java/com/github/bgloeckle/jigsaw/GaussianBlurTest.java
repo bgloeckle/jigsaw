@@ -21,6 +21,8 @@
 package com.github.bgloeckle.jigsaw;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.function.Supplier;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -31,14 +33,17 @@ import com.github.bgloeckle.jigsaw.pipeline.Pipeline;
 import com.github.bgloeckle.jigsaw.steps.GaussianBlur;
 import com.github.bgloeckle.jigsaw.steps.ToSimpleLuminosityGreyscale;
 import com.github.bgloeckle.jigsaw.testutil.FromSimpleLuminosityGreyscale;
+import com.github.bgloeckle.jigsaw.testutil.TestImageAssert;
 
 public class GaussianBlurTest {
+    private static final Supplier<InputStream> FOREST_ROAD_EXPECTED = () -> GaussianBlurTest.class.getResourceAsStream(
+                    "/" + GaussianBlurTest.class.getSimpleName() + "/road-in-autumn-forest-1318271179yAn.serialized");
 
     private Image img;
 
     @Before
     public void before() throws IOException {
-        img = new ImageIo().loadImage(TestResources.FILE_1.get());
+        img = new ImageIo().loadImage(TestResources.FOREST_ROAD.get());
     }
 
     @Test
@@ -47,6 +52,8 @@ public class GaussianBlurTest {
                         new FromSimpleLuminosityGreyscale());
         img = p.process(img);
 
-        // new ImageIo().writeImage(img, "/tmp/hello.png");
+        TestImageAssert.assertAsExpected(img, FOREST_ROAD_EXPECTED);
     }
+
+
 }

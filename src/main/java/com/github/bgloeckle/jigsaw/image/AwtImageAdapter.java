@@ -21,10 +21,13 @@
 package com.github.bgloeckle.jigsaw.image;
 
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 public class AwtImageAdapter implements Image {
+    private static final long serialVersionUID = 1L;
+
     private int[][] color;
-    private int origImageType;
+    private transient int origImageType;
 
     public AwtImageAdapter(BufferedImage img) {
         importFrom(img);
@@ -83,5 +86,27 @@ public class AwtImageAdapter implements Image {
     @Override
     public Image copy() {
         return new AwtImageAdapter(this);
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.deepHashCode(color);
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        AwtImageAdapter other = (AwtImageAdapter) obj;
+        if (!Arrays.deepEquals(color, other.color))
+            return false;
+        return true;
     }
 }

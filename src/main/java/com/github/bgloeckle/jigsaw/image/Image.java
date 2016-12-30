@@ -20,7 +20,9 @@
  */
 package com.github.bgloeckle.jigsaw.image;
 
-public interface Image {
+import java.io.Serializable;
+
+public interface Image extends Serializable {
     public int getColor(int x, int y);
 
     public void setColor(int x, int y, int newColor);
