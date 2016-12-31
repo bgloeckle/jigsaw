@@ -20,12 +20,16 @@
  */
 package com.github.bgloeckle.jigsaw.testutil;
 
+import java.awt.image.BufferedImage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.bgloeckle.jigsaw.image.AwtImageAdapter;
 import com.github.bgloeckle.jigsaw.image.AwtImageIo;
 import com.github.bgloeckle.jigsaw.image.Image;
 import com.github.bgloeckle.jigsaw.pipeline.Step;
+import com.github.bgloeckle.jigsaw.util.EdgeDirection;
 
 /**
  * Translates greyscale values of an image back to AWT pixel values, so we can
@@ -45,11 +49,31 @@ public class FromSimpleLuminosityGreyscale implements Step {
                 int green = red;
                 int blue = red;
 
+                EdgeDirection ourDirection = EdgeDirection.fromGradientRadian(t.getDirection(x, y));
+
+                if (ourDirection != null) {
+                    switch (ourDirection) {
+                        case EAST_WEST:
+                            green = blue = 0; // red
+                            break;
+                        case NORTH_SOUTH:
+                            red = blue = 0; // green
+                            break;
+                        case NORTHEAST_SOUTHWEST:
+                            green = red = 0; // blue
+                            break;
+                        case SOUTHEAST_NORTHWEST:
+                            blue = 0; // yellow
+                            break;
+                    }
+                } // else noop (white/grey)
+
                 int rgb = (red & 0xFF) << 16 | (green & 0xFF) << 8 | (blue & 0xFF);
 
                 t.setColor(x, y, rgb);
             }
         }
+        ((AwtImageAdapter) t).setBufferedImageType(BufferedImage.TYPE_INT_RGB);
     }
 
 }

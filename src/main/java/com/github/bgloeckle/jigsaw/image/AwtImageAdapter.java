@@ -28,7 +28,7 @@ public class AwtImageAdapter implements Image {
 
     private double[][] direction;
     private int[][] color;
-    private transient int origImageType;
+    private transient int bufferedImageType;
 
     public AwtImageAdapter(BufferedImage img) {
         importFrom(img);
@@ -47,7 +47,7 @@ public class AwtImageAdapter implements Image {
                 direction[x][y] = other.direction[x][y];
             }
         }
-        origImageType = other.origImageType;
+        bufferedImageType = other.bufferedImageType;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class AwtImageAdapter implements Image {
     }
 
     public BufferedImage toBufferedImage() {
-        BufferedImage res = new BufferedImage(color.length, color[0].length, origImageType);
+        BufferedImage res = new BufferedImage(color.length, color[0].length, bufferedImageType);
         for (int x = 0; x < color.length; x++) {
             for (int y = 0; y < color[0].length; y++) {
                 res.setRGB(x, y, color[x][y]);
@@ -95,7 +95,7 @@ public class AwtImageAdapter implements Image {
      */
     public void importFrom(BufferedImage img) {
         color = new int[img.getWidth()][img.getHeight()];
-        origImageType = img.getType();
+        bufferedImageType = img.getType();
         for (int x = 0; x < img.getWidth(); x++) {
             for (int y = 0; y < img.getHeight(); y++) {
                 color[x][y] = img.getRGB(x, y);
@@ -110,6 +110,10 @@ public class AwtImageAdapter implements Image {
     @Override
     public Image copy() {
         return new AwtImageAdapter(this);
+    }
+
+    public void setBufferedImageType(int bufferedImageType) {
+        this.bufferedImageType = bufferedImageType;
     }
 
     @Override

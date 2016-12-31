@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.bgloeckle.jigsaw.image.Image;
 import com.github.bgloeckle.jigsaw.pipeline.Step;
+import com.github.bgloeckle.jigsaw.util.EdgeDirection;
 
 /**
  * Implements the non-maximum-suppression of the Canny edge detection algorithm. This thins out the edges.
@@ -41,9 +42,7 @@ import com.github.bgloeckle.jigsaw.pipeline.Step;
 public class NonMaximumSuppression implements Step {
     private static final Logger logger = LoggerFactory.getLogger(NonMaximumSuppression.class);
 
-    private enum CoarseDirection {
-        NORTH_SOUTH, EAST_WEST, NORTHEAST_SOUTHWEST, SOUTHEAST_NORTHWEST
-    }
+
 
     @Override
     public void accept(Image t) {
@@ -54,25 +53,32 @@ public class NonMaximumSuppression implements Step {
 
         for (int x = 0; x < original.getWidth(); x++) {
             for (int y = 0; y < original.getHeight(); y++) {
-                CoarseDirection ourDir = getCoarseDirection(original.getDirection(x, y));
+                EdgeDirection ourDir = EdgeDirection.fromGradientRadian(original.getDirection(x, y));
+                if (ourDir == null) {
+                    // Pixel is black already
+                    continue;
+                }
+
                 int colorOtherPixel1;
                 int colorOtherPixel2;
                 switch (ourDir) {
-                    case NORTH_SOUTH:
+                    case EAST_WEST:
+                        // edge direction east-west -> check pixels above and below
                         colorOtherPixel1 = original.getColor(x, Math.max(0, y - 1));
                         colorOtherPixel2 = original.getColor(x, Math.min(original.getHeight() - 1, y + 1));
                         break;
-                    case EAST_WEST:
+                    case NORTH_SOUTH:
+                        // edge direction north-south -> check pixels left and right
                         colorOtherPixel1 = original.getColor(Math.max(0, x - 1), y);
                         colorOtherPixel2 = original.getColor(Math.min(original.getWidth() - 1, x + 1), y);
                         break;
-                    case NORTHEAST_SOUTHWEST:
+                    case SOUTHEAST_NORTHWEST:
                         colorOtherPixel1 = original.getColor(Math.min(original.getWidth() - 1, x + 1),
                                         Math.max(0, y - 1));
                         colorOtherPixel2 = original.getColor(Math.max(0, x - 1),
                                         Math.min(original.getHeight() - 1, y + 1));
                         break;
-                    case SOUTHEAST_NORTHWEST:
+                    case NORTHEAST_SOUTHWEST:
                         colorOtherPixel1 = original.getColor(Math.max(0, x - 1), Math.max(0, y - 1));
                         colorOtherPixel2 = original.getColor(Math.min(original.getWidth() - 1, x + 1),
                                         Math.min(original.getHeight() - 1, y + 1));
@@ -94,20 +100,5 @@ public class NonMaximumSuppression implements Step {
         logger.debug("Cleaned {} unneeded pixels", cleanCount);
     }
 
-    private CoarseDirection getCoarseDirection(double fineGrainedDirection) {
-        double norm = fineGrainedDirection / Math.PI;
-        if (norm > 1.) {
-            norm /= 2.;
-        }
-        if (norm <= 1. / 8. || norm >= 7. / 8.) {
-            return CoarseDirection.EAST_WEST;
-        }
-        if (norm <= 3. / 8.) {
-            return CoarseDirection.NORTHEAST_SOUTHWEST;
-        }
-        if (norm >= 5. / 8.) {
-            return CoarseDirection.SOUTHEAST_NORTHWEST;
-        }
-        return CoarseDirection.NORTH_SOUTH;
-    }
+
 }

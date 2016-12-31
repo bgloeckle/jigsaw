@@ -47,6 +47,8 @@ public class ToSimpleLuminosityGreyscale implements Step {
         logger.info("Converting to simple luminosity greyscale");
         BufferedImage img = ((AwtImageAdapter) t).toBufferedImage();
 
+        int maxColor = 0;
+
         for (int x = 0; x < t.getWidth(); x++) {
             for (int y = 0; y < t.getHeight(); y++) {
                 Object colorData = img.getRaster().getDataElements(x, y, null);
@@ -57,7 +59,20 @@ public class ToSimpleLuminosityGreyscale implements Step {
                 // according to wikipedia https://en.wikipedia.org/wiki/Grayscale
                 int color = (int) Math.round(.2126 * red + .7152 * green + .0722 * blue);
 
+                if (color > maxColor) {
+                    maxColor = color;
+                }
                 t.setColor(x, y, color);
+            }
+        }
+
+        // normalize to a max value of 255.
+        if (maxColor != 255) {
+            double factor = 255. / maxColor;
+            for (int x = 0; x < t.getWidth(); x++) {
+                for (int y = 0; y < t.getHeight(); y++) {
+                    t.setColor(x, y, (int) Math.round(t.getColor(x, y) * factor));
+                }
             }
         }
     }

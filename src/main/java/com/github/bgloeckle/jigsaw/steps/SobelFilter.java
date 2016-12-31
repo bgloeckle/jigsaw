@@ -58,6 +58,7 @@ public class SobelFilter implements Step {
     @Override
     public void accept(Image t) {
         logger.info("Applying Sobel filter");
+        // Do not normalize, since the sum of all weights for our kernels is 0.
         Image xImage = t.copy();
         Convolution.applyConvolution(X_KERNEL, xImage, false);
 
@@ -66,8 +67,21 @@ public class SobelFilter implements Step {
         
         for (int x = 0; x < t.getWidth(); x++) {
             for (int y = 0; y < t.getHeight(); y++) {
-                t.setColor(x, y, (int) Math.round(Math.hypot(xImage.getColor(x, y), yImage.getColor(x, y))));
-                t.setDirection(x, y, (int) Math.round(Math.atan2(yImage.getColor(x, y), xImage.getColor(x, y))));
+                int xColor = xImage.getColor(x, y);
+                int yColor = yImage.getColor(x, y);
+
+                t.setColor(x, y, (int) Math.round(Math.hypot(xColor, yColor)));
+                if (xColor == 0 && yColor == 0) {
+                    t.setDirection(x, y, Image.DIRECTION_UNDEFINED);
+                } else if (xColor == 0) {
+                    // kernel for vertical line identification did not find anything -> horizontal line
+                    t.setDirection(x, y, .0);
+                } else if (yColor == 0) {
+                    // kernel for horizontal line identification did not find anything -> vertical line
+                    t.setDirection(x, y, Math.PI / 2);
+                } else {
+                    t.setDirection(x, y, Math.atan2(yColor, xColor) + Math.PI);
+                }
             }
         }
     }

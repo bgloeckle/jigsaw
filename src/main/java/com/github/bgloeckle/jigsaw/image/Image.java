@@ -31,7 +31,7 @@ import com.github.bgloeckle.jigsaw.pipeline.Pipeline;
  * @author Bastian Gloeckle
  */
 public interface Image extends Serializable {
-    public static final double DIRECTION_UNDEFINED = Double.NaN;
+    public static final double DIRECTION_UNDEFINED = Double.NEGATIVE_INFINITY;
 
     /**
      * @param x
