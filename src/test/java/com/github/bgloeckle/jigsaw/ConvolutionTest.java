@@ -94,5 +94,14 @@ public class ConvolutionTest {
             return new ArrayBasedImage(newColor);
         }
 
+        @Override
+        public double getDirection(int x, int y) {
+            return 0;
+        }
+
+        @Override
+        public void setDirection(int x, int y, double direction) {
+        }
+
     }
 }

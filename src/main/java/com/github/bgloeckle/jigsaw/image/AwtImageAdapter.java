@@ -26,6 +26,7 @@ import java.util.Arrays;
 public class AwtImageAdapter implements Image {
     private static final long serialVersionUID = 1L;
 
+    private double[][] direction;
     private int[][] color;
     private transient int origImageType;
 
@@ -40,6 +41,12 @@ public class AwtImageAdapter implements Image {
                 color[x][y] = other.color[x][y];
             }
         }
+        direction = new double[other.direction.length][other.direction[0].length];
+        for (int x = 0; x < direction.length; x++) {
+            for (int y = 0; y < direction[0].length; y++) {
+                direction[x][y] = other.direction[x][y];
+            }
+        }
         origImageType = other.origImageType;
     }
 
@@ -51,6 +58,16 @@ public class AwtImageAdapter implements Image {
     @Override
     public void setColor(int x, int y, int newColor) {
         color[x][y] = newColor;
+    }
+
+    @Override
+    public double getDirection(int x, int y) {
+        return direction[x][y];
+    }
+
+    @Override
+    public void setDirection(int x, int y, double direction) {
+        this.direction[x][y] = direction;
     }
 
     @Override
@@ -73,6 +90,9 @@ public class AwtImageAdapter implements Image {
         return res;
     }
 
+    /**
+     * Import from a {@link BufferedImage}. Note: the directions of the pixels will be {@link Image#DIRECTION_UNDEFINED}
+     */
     public void importFrom(BufferedImage img) {
         color = new int[img.getWidth()][img.getHeight()];
         origImageType = img.getType();
@@ -80,6 +100,10 @@ public class AwtImageAdapter implements Image {
             for (int y = 0; y < img.getHeight(); y++) {
                 color[x][y] = img.getRGB(x, y);
             }
+        }
+        direction = new double[img.getWidth()][img.getHeight()];
+        for (int x = 0; x < direction.length; x++) {
+            Arrays.fill(direction[x], DIRECTION_UNDEFINED);
         }
     }
 
@@ -93,6 +117,7 @@ public class AwtImageAdapter implements Image {
         final int prime = 31;
         int result = 1;
         result = prime * result + Arrays.deepHashCode(color);
+        result = prime * result + Arrays.deepHashCode(direction);
         return result;
     }
 
@@ -106,6 +131,8 @@ public class AwtImageAdapter implements Image {
             return false;
         AwtImageAdapter other = (AwtImageAdapter) obj;
         if (!Arrays.deepEquals(color, other.color))
+            return false;
+        if (!Arrays.deepEquals(direction, other.direction))
             return false;
         return true;
     }

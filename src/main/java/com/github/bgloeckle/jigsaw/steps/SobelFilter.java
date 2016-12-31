@@ -29,7 +29,11 @@ import com.github.bgloeckle.jigsaw.util.Convolution;
 
 /**
  * Applies a SobelFilter on the input image. This calculates the edges of the image by using the gradient of the
- * intesity function of the image.
+ * intensity function of the image.
+ * 
+ * <p>
+ * This will also set the direction of the pixels in the image according to the direction of the edge that is available
+ * at specific pixels.
  * 
  * <p>
  * See https://en.wikipedia.org/wiki/Sobel_operator.
@@ -62,7 +66,8 @@ public class SobelFilter implements Step {
         
         for (int x = 0; x < t.getWidth(); x++) {
             for (int y = 0; y < t.getHeight(); y++) {
-                t.setColor(x, y, (int) Math.hypot(xImage.getColor(x, y), yImage.getColor(x, y)));
+                t.setColor(x, y, (int) Math.round(Math.hypot(xImage.getColor(x, y), yImage.getColor(x, y))));
+                t.setDirection(x, y, (int) Math.round(Math.atan2(yImage.getColor(x, y), xImage.getColor(x, y))));
             }
         }
     }

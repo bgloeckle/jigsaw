@@ -25,11 +25,14 @@ import java.io.Serializable;
 import com.github.bgloeckle.jigsaw.pipeline.Pipeline;
 
 /**
- * Representation of an image with a specific size and a simple representation of pixels in a 2-dim array.
+ * Representation of an image with a specific size and a simple representation of pixels in a 2-dim array. Additionally
+ * it provides the possibility to store "direction" of pixels.
  *
  * @author Bastian Gloeckle
  */
 public interface Image extends Serializable {
+    public static final double DIRECTION_UNDEFINED = Double.NaN;
+
     /**
      * @param x
      *            >= 0 && x < {@link #getWidth()}
@@ -50,6 +53,25 @@ public interface Image extends Serializable {
      *            not generally specified, it depends on the current {@link Pipeline}.
      */
     public void setColor(int x, int y, int newColor);
+
+    /**
+     * @param x
+     *            >= 0 && x < {@link #getWidth()}
+     * @param y
+     *            >= 0 && y < {@link #getHeight()}
+     * @return The direction of a specific pixel in radian. Max be {@link #DIRECTION_UNDEFINED}.
+     */
+    public double getDirection(int x, int y);
+
+    /**
+     * @param x
+     *            >= 0 && x < {@link #getWidth()}
+     * @param y
+     *            >= 0 && y < {@link #getHeight()}
+     * @param direction
+     *            The new direction of the given pixel in radian.
+     */
+    public void setDirection(int x, int y, double direction);
 
     /**
      * @return number of pixels on the x axis
