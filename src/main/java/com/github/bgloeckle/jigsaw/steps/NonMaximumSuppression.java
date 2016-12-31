@@ -50,6 +50,8 @@ public class NonMaximumSuppression implements Step {
         logger.info("Applying non-maxmimum suppression");
         Image original = t.copy();
 
+        int cleanCount = 0;
+
         for (int x = 0; x < original.getWidth(); x++) {
             for (int y = 0; y < original.getHeight(); y++) {
                 CoarseDirection ourDir = getCoarseDirection(original.getDirection(x, y));
@@ -84,9 +86,12 @@ public class NonMaximumSuppression implements Step {
                     // no local maximum, disable pixel!
                     t.setColor(x, y, 0);
                     t.setDirection(x, y, Image.DIRECTION_UNDEFINED);
+                    cleanCount++;
                 }
             }
         }
+
+        logger.debug("Cleaned {} unneeded pixels", cleanCount);
     }
 
     private CoarseDirection getCoarseDirection(double fineGrainedDirection) {
