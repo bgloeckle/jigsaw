@@ -20,61 +20,46 @@
  */
 package com.github.bgloeckle.jigsaw.steps;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.bgloeckle.jigsaw.image.Image;
 import com.github.bgloeckle.jigsaw.pipeline.Step;
-import com.github.bgloeckle.jigsaw.util.Pair;
+import com.github.bgloeckle.jigsaw.util.Convolution;
 
 public class GaussianBlur implements Step {
     private static final Logger logger = LoggerFactory.getLogger(GaussianBlur.class);
 
-    private static final Map<Pair<Integer, Integer>, Double> WEIGHT_CACHE = new HashMap<>();
-
+    private final double[][] kernel;
     private int sigma;
 
     public GaussianBlur(int sigma) {
         this.sigma = sigma;
+
+        int kernelSize = sigma * 6; // according to wikipedia *6 is enough
+        if (kernelSize % 2 == 0) {
+            kernelSize++; // our impl needs a odd-sized kernel
+        }
+
+        kernel = new double[kernelSize][kernelSize];
+        int kernelMidIdx = (kernelSize - 1) / 2;
+        for (int x = 0; x < kernelSize; x++) {
+            for (int y = 0; y < kernelSize; y++) {
+                kernel[x][y] = kernelEntry(x - kernelMidIdx, y - kernelMidIdx, sigma);
+            }
+        }
+    }
+
+    private double kernelEntry(int deltaX, int deltaY, int sigma) {
+        // See wikipedia.
+        return Math.exp(-(Math.pow(deltaX, 2) + Math.pow(deltaY, 2)) / (2 * Math.pow(sigma, 2)))
+                        / (2 * Math.PI * Math.pow(sigma, 2));
     }
 
     @Override
     public void accept(Image output) {
         logger.info("Applying Gaussian blur filter with sigma={}", sigma);
 
-        Image original = output.copy();
-
-        int radius = sigma * 3; // according to wikipedia
-        for (int x = 0; x < output.getWidth(); x++) {
-            for (int y = 0; y < output.getHeight(); y++) {
-                int resColor = 0;
-                double weightSum = .0;
-                for (int inputX = Math.max(0, x - radius); inputX < Math.min(output.getWidth(), x + radius); inputX++) {
-                    for (int inputY = Math.max(0, y - radius); inputY < Math.min(output.getHeight(),
-                                    y + radius); inputY++) {
-
-                        double weight = getWeight(Math.abs(inputX - x), Math.abs(inputY - y));
-
-                        resColor += weight * original.getColor(inputX, inputY);
-                        weightSum += weight;
-                    }
-                }
-                resColor /= weightSum;
-                output.setColor(x, y, resColor);
-            }
-        }
+        Convolution.applyConvolution(kernel, output, true);
     }
-
-    private double getWeight(int deltaX, int deltaY) {
-        Pair<Integer, Integer> pos = new Pair<>(deltaX, deltaY);
-        if (!WEIGHT_CACHE.containsKey(pos)) {
-            WEIGHT_CACHE.put(pos, Math.exp(-(Math.pow(deltaX, 2) + Math.pow(deltaY, 2)) / (2 * Math.pow(sigma, 2)))
-                            / (2 * Math.PI * Math.pow(sigma, 2)));
-        }
-        return WEIGHT_CACHE.get(pos);
-    }
-
 }

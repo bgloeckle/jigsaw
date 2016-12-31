@@ -36,8 +36,13 @@ import com.github.bgloeckle.jigsaw.testutil.FromSimpleLuminosityGreyscale;
 import com.github.bgloeckle.jigsaw.testutil.TestImageAssert;
 
 public class GaussianBlurTest {
-    private static final Supplier<InputStream> FOREST_ROAD_EXPECTED = () -> GaussianBlurTest.class.getResourceAsStream(
-                    "/" + GaussianBlurTest.class.getSimpleName() + "/road-in-autumn-forest-1318271179yAn.serialized");
+    private static final Supplier<InputStream> FOREST_ROAD_SIGMA2_EXPECTED = () -> GaussianBlurTest.class
+                    .getResourceAsStream("/" + GaussianBlurTest.class.getSimpleName()
+                                    + "/road-in-autumn-forest-1318271179yAn-2.serialized");
+
+    private static final Supplier<InputStream> FOREST_ROAD_SIGMA7_EXPECTED = () -> GaussianBlurTest.class
+                    .getResourceAsStream("/" + GaussianBlurTest.class.getSimpleName()
+                                    + "/road-in-autumn-forest-1318271179yAn-7.serialized");
 
     private Image img;
 
@@ -47,13 +52,21 @@ public class GaussianBlurTest {
     }
 
     @Test
-    public void simple() throws IOException {
+    public void sigma2() throws IOException {
         Pipeline p = new Pipeline(new ToSimpleLuminosityGreyscale(), new GaussianBlur(2),
                         new FromSimpleLuminosityGreyscale());
         img = p.process(img);
 
-        TestImageAssert.assertAsExpected(img, FOREST_ROAD_EXPECTED);
+        TestImageAssert.assertAsExpected(img, FOREST_ROAD_SIGMA2_EXPECTED);
     }
 
+    @Test
+    public void sigma7() throws IOException {
+        Pipeline p = new Pipeline(new ToSimpleLuminosityGreyscale(), new GaussianBlur(7),
+                        new FromSimpleLuminosityGreyscale());
+        img = p.process(img);
+
+        TestImageAssert.assertAsExpected(img, FOREST_ROAD_SIGMA7_EXPECTED);
+    }
 
 }

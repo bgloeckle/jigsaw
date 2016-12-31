@@ -63,6 +63,7 @@
                             <excludes>
                                 <exclude>LICENSE</exclude>
                                 <exclude>README.md</exclude>
+                                <ecxlude>**/*.serialized</ecxlude>
                             </excludes>
                         </configuration>
                     </execution>

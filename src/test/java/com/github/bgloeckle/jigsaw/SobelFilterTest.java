@@ -62,7 +62,7 @@ public class SobelFilterTest {
 
     @Test
     public void withGaussian() throws IOException {
-        Pipeline p = new Pipeline(new ToSimpleLuminosityGreyscale(), new GaussianBlur(5), new SobelFilter(),
+        Pipeline p = new Pipeline(new ToSimpleLuminosityGreyscale(), new GaussianBlur(2), new SobelFilter(),
                         new FromSimpleLuminosityGreyscale());
         img = p.process(img);
 
