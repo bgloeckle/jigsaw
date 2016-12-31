@@ -22,9 +22,6 @@ package com.github.bgloeckle.jigsaw;
 
 public class Main {
     public static void main(String[] args) {
-        // List<SCIFIOImgPlus<FloatType>> images = new ImgOpener().openImgs("a.png", new FloatType());
-        // SCIFIOImgPlus<FloatType> img = images.get(0);
-        // Gauss3.gauss(8, img, img);
-        // new ImageJ().display().
+        // TODO
     }
 }

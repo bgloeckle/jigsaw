@@ -27,6 +27,15 @@ import com.github.bgloeckle.jigsaw.image.Image;
 import com.github.bgloeckle.jigsaw.pipeline.Step;
 import com.github.bgloeckle.jigsaw.util.Convolution;
 
+/**
+ * Applies a SobelFilter on the input image. This calculates the edges of the image by using the gradient of the
+ * intesity function of the image.
+ * 
+ * <p>
+ * See https://en.wikipedia.org/wiki/Sobel_operator.
+ *
+ * @author Bastian Gloeckle
+ */
 public class SobelFilter implements Step {
     private static final Logger logger = LoggerFactory.getLogger(SobelFilter.class);
 

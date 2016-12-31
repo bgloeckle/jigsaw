@@ -31,7 +31,7 @@ import java.util.function.Supplier;
 import org.junit.Assert;
 
 import com.github.bgloeckle.jigsaw.image.Image;
-import com.github.bgloeckle.jigsaw.image.ImageIo;
+import com.github.bgloeckle.jigsaw.image.AwtImageIo;
 
 public class TestImageAssert {
     /**
@@ -63,7 +63,7 @@ public class TestImageAssert {
 
         try {
             File tempImageTarget = File.createTempFile(testClassName, ".png");
-            new ImageIo().writeImage(actualImage, tempImageTarget.getAbsolutePath());
+            new AwtImageIo().writeImage(actualImage, tempImageTarget.getAbsolutePath());
 
             File tempSerializedTarget = File.createTempFile(testClassName, ".serialized");
             try (FileOutputStream fos = new FileOutputStream(tempSerializedTarget)) {

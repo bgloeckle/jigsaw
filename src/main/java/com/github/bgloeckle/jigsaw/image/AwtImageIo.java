@@ -30,9 +30,21 @@ import javax.imageio.ImageIO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ImageIo {
-    private static final Logger logger = LoggerFactory.getLogger(ImageIo.class);
+import com.github.bgloeckle.jigsaw.steps.ToSimpleLuminosityGreyscale;
 
+/**
+ * Input/output of images based on AWT.
+ *
+ * @author Bastian Gloeckle
+ */
+public class AwtImageIo {
+    private static final Logger logger = LoggerFactory.getLogger(AwtImageIo.class);
+
+    /**
+     * @return An image loaded from the given stream or <code>null</code>. The pixels of the returned image are in a
+     *         format such that they can be passed to {@link #writeImage(Image, String)} or to
+     *         {@link ToSimpleLuminosityGreyscale}.
+     */
     public Image loadImage(InputStream stream) {
         try {
             return new AwtImageAdapter(ImageIO.read(stream));
@@ -42,6 +54,10 @@ public class ImageIo {
         }
     }
 
+    /**
+     * Write the given image to the given location. The image MUST have pixels of the format that AWT
+     * {@link BufferedImage} expects!
+     */
     public void writeImage(Image img, String fileLocation) {
         if (!(img instanceof AwtImageAdapter)) {
             logger.error("Wrong image type: {}", img.getClass().getName());

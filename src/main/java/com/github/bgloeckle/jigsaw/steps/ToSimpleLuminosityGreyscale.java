@@ -26,9 +26,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.bgloeckle.jigsaw.image.AwtImageAdapter;
+import com.github.bgloeckle.jigsaw.image.AwtImageIo;
 import com.github.bgloeckle.jigsaw.image.Image;
 import com.github.bgloeckle.jigsaw.pipeline.Step;
 
+/**
+ * Converts AWT color values as returned by {@link AwtImageIo} into greyscale values using a simple luminosity approach.
+ * 
+ * <p>
+ * Note that images that have been processed by this step are no longer passable to
+ * {@link AwtImageIo#writeImage(Image, String)}.
+ *
+ * @author Bastian Gloeckle
+ */
 public class ToSimpleLuminosityGreyscale implements Step {
     private static final Logger logger = LoggerFactory.getLogger(ToSimpleLuminosityGreyscale.class);
 

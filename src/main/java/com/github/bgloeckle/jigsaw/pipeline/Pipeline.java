@@ -22,6 +22,11 @@ package com.github.bgloeckle.jigsaw.pipeline;
 
 import com.github.bgloeckle.jigsaw.image.Image;
 
+/**
+ * Pipeline of {@link Step}s which are executed consecutively on {@link #process(Image)}.
+ *
+ * @author Bastian Gloeckle
+ */
 public class Pipeline {
     private Step[] steps;
 

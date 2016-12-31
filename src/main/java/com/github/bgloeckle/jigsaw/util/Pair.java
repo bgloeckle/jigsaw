@@ -20,6 +20,11 @@
  */
 package com.github.bgloeckle.jigsaw.util;
 
+/**
+ * Simple Pair of immutable values, implements equals and hashCode.
+ *
+ * @author Bastian Gloeckle
+ */
 public class Pair<L, R> {
     private final L left;
     private final R right;

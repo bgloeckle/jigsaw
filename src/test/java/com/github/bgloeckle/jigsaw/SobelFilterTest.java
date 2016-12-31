@@ -28,7 +28,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.github.bgloeckle.jigsaw.image.Image;
-import com.github.bgloeckle.jigsaw.image.ImageIo;
+import com.github.bgloeckle.jigsaw.image.AwtImageIo;
 import com.github.bgloeckle.jigsaw.pipeline.Pipeline;
 import com.github.bgloeckle.jigsaw.steps.GaussianBlur;
 import com.github.bgloeckle.jigsaw.steps.SobelFilter;
@@ -48,7 +48,7 @@ public class SobelFilterTest {
 
     @Before
     public void before() throws IOException {
-        img = new ImageIo().loadImage(TestResources.FOREST_ROAD.get());
+        img = new AwtImageIo().loadImage(TestResources.FOREST_ROAD.get());
     }
 
     @Test

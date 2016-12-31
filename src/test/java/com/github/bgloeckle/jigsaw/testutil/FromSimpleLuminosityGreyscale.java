@@ -23,9 +23,16 @@ package com.github.bgloeckle.jigsaw.testutil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.bgloeckle.jigsaw.image.AwtImageIo;
 import com.github.bgloeckle.jigsaw.image.Image;
 import com.github.bgloeckle.jigsaw.pipeline.Step;
 
+/**
+ * Translates greyscale values of an image back to AWT pixel values, so we can
+ * {@link AwtImageIo#writeImage(Image, String)} again.
+ *
+ * @author Bastian Gloeckle
+ */
 public class FromSimpleLuminosityGreyscale implements Step {
     private static final Logger logger = LoggerFactory.getLogger(FromSimpleLuminosityGreyscale.class);
 

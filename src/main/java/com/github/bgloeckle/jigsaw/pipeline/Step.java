@@ -24,5 +24,11 @@ import java.util.function.Consumer;
 
 import com.github.bgloeckle.jigsaw.image.Image;
 
+/**
+ * A single Step in a {@link Pipeline} which adjusts the image that is passed to {@link #accept(Image)} in a certain
+ * way.
+ *
+ * @author Bastian Gloeckle
+ */
 public interface Step extends Consumer<Image> {
 }

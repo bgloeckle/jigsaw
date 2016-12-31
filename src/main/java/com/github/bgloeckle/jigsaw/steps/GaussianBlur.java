@@ -27,6 +27,12 @@ import com.github.bgloeckle.jigsaw.image.Image;
 import com.github.bgloeckle.jigsaw.pipeline.Step;
 import com.github.bgloeckle.jigsaw.util.Convolution;
 
+/**
+ * Applies a "Gaussian Blur" on the image with a fixed sigma. Expects the input image to only have greyscale values as
+ * colors.
+ *
+ * @author Bastian Gloeckle
+ */
 public class GaussianBlur implements Step {
     private static final Logger logger = LoggerFactory.getLogger(GaussianBlur.class);
 

@@ -22,14 +22,47 @@ package com.github.bgloeckle.jigsaw.image;
 
 import java.io.Serializable;
 
+import com.github.bgloeckle.jigsaw.pipeline.Pipeline;
+
+/**
+ * Representation of an image with a specific size and a simple representation of pixels in a 2-dim array.
+ *
+ * @author Bastian Gloeckle
+ */
 public interface Image extends Serializable {
+    /**
+     * @param x
+     *            >= 0 && x < {@link #getWidth()}
+     * @param y
+     *            >= 0 && y < {@link #getHeight()}
+     * @return The color value at the given location. Note: What exactly the returned integer represents is not
+     *         generally specified, see the current {@link Pipeline}.
+     */
     public int getColor(int x, int y);
 
+    /**
+     * @param x
+     *            >= 0 && x < {@link #getWidth()}
+     * @param y
+     *            >= 0 && y < {@link #getHeight()}
+     * @param newColor
+     *            The value of the new color to set for the given pixel. Note: What exactly the integer represents is
+     *            not generally specified, it depends on the current {@link Pipeline}.
+     */
     public void setColor(int x, int y, int newColor);
 
+    /**
+     * @return number of pixels on the x axis
+     */
     public int getWidth();
 
+    /**
+     * @return number of pixels on the y axis
+     */
     public int getHeight();
 
+    /**
+     * @return A full copy of the image.
+     */
     public Image copy();
 }
