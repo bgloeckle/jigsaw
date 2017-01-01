@@ -20,8 +20,27 @@
  */
 package com.github.bgloeckle.jigsaw;
 
+import java.io.File;
+
 public class Main {
     public static void main(String[] args) {
-        // TODO
+        if (args.length != 2 || args[0].equals("--help")) {
+            displayHelp();
+            return;
+        }
+        File inputFile = new File(args[0]);
+        if (!inputFile.isFile() || !inputFile.exists()) {
+            System.err.println("'" + args[0] + "' is no file or does not exist.");
+            return;
+        }
+
+        File outputFile = new File(args[1]);
+
+        new JigsawSolver(inputFile, outputFile).solve();
+    }
+
+    private static void displayHelp() {
+        System.out.println("Solve picture jigsaws.");
+        System.out.println("Parameters: [source image].png [destination image].png");
     }
 }

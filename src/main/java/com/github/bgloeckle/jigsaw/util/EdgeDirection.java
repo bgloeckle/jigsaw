@@ -22,8 +22,30 @@ package com.github.bgloeckle.jigsaw.util;
 
 import com.github.bgloeckle.jigsaw.image.Image;
 
+/**
+ * Direction of an edge that can be calculated by the radiant of the gradient of the edge.
+ * 
+ * <p>
+ * Note: The direction of the gradient of an edge points in the direction that is 90° of the direction of the edge
+ * itself!
+ *
+ * @author Bastian Gloeckle
+ */
 public enum EdgeDirection {
-    NORTH_SOUTH, EAST_WEST, NORTHEAST_SOUTHWEST, SOUTHEAST_NORTHWEST;
+    NORTH_SOUTH(0.), //
+    EAST_WEST(Math.PI / 2.), //
+    NORTHEAST_SOUTHWEST(3. * Math.PI / 4.), //
+    SOUTHEAST_NORTHWEST(Math.PI / 4.); //
+
+    private double gradientRadian;
+
+    private EdgeDirection(double gradientRadian) {
+        this.gradientRadian = gradientRadian;
+    }
+
+    public double getGradientRadian() {
+        return gradientRadian;
+    }
 
     public static EdgeDirection fromGradientRadian(double radianDirection) {
         if (radianDirection == Image.DIRECTION_UNDEFINED) {
@@ -31,7 +53,7 @@ public enum EdgeDirection {
         }
 
         double norm = radianDirection / Math.PI;
-        if (norm > 1. + 1e4) {
+        if (norm > 1. + 1e-4) {
             norm /= 2.;
         }
         if (norm <= 1. / 8. || norm >= 7. / 8.) {
