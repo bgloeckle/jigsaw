@@ -73,13 +73,12 @@ public class EdgeTrackingByDoubleThreshold implements Step {
 
         int cleanCount = 0;
 
-        logger.info("Tracking edges using double threshold (factors: lower={}, upper={})", lowerThresholdPercentage,
-                        upperThresholdPercentage);
         double quantile90 = approximateQuantile90(original);
         int lowerThresholdValue = (int) Math.round(quantile90 * lowerThresholdPercentage);
         int upperThresholdValue = (int) Math.round(quantile90 * upperThresholdPercentage);
-        logger.debug("Actual threshold values: lower={}, upper={} (90% quantile={})", lowerThresholdValue,
-                        upperThresholdValue, quantile90);
+        logger.info("Tracking edges using double threshold (factors: lower={}, upper={}): approx90percentile={}, "
+                        + "lower={}, upper={}", lowerThresholdPercentage, upperThresholdPercentage, quantile90,
+                        lowerThresholdValue, upperThresholdValue);
 
         for (int x = 0; x < original.getWidth(); x++) {
             for (int y = 0; y < original.getHeight(); y++) {
@@ -117,7 +116,7 @@ public class EdgeTrackingByDoubleThreshold implements Step {
         if (numberOfPixelsTotal > 100_000) {
             // let's sample the pixels.
             Set<Pair<Integer, Integer>> colorIndices = new HashSet<>();
-            while (colorIndices.size() < 200 || colorIndices.size() < numberOfPixelsTotal / 1_000) {
+            while (colorIndices.size() < 1_000 || colorIndices.size() < numberOfPixelsTotal / 1_000) {
                 colorIndices.add(new Pair<>(randomProvider.provideRandomInt(i.getWidth()),
                                 randomProvider.provideRandomInt(i.getHeight())));
             }

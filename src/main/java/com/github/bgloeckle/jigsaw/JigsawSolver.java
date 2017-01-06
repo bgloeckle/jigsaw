@@ -58,8 +58,10 @@ public class JigsawSolver {
         }
 
         logger.info("Identifying edges in input image using Canny algorithm...");
-        Image edgeImage = new Pipeline(new ToSimpleLuminosityGreyscale(), new GaussianBlur(3), new SobelFilter(),
+        Image inputEdgeImage = new Pipeline(new ToSimpleLuminosityGreyscale(), new GaussianBlur(3), new SobelFilter(),
                         new NonMaximumSuppression(), new EdgeTrackingByDoubleThreshold(.4, .85)).process(inputImage);
+        double inputEdgeImageJudgement = new Judge(inputEdgeImage).judge();
+        logger.info("Input image has a judgement of: {}", inputEdgeImageJudgement);
 
         Set<Integer> possibleCutsX = new HashSet<>();
         for (int i = 2; i <= Math.round(inputImage.getWidth() / 2.); i++) {
@@ -67,11 +69,14 @@ public class JigsawSolver {
                 possibleCutsX.add(i);
             }
         }
+        possibleCutsX.add(inputImage.getWidth());
         Set<Integer> possibleCutsY = new HashSet<>();
         for (int i = 2; i <= Math.round(inputImage.getHeight() / 2.); i++) {
             if (inputImage.getHeight() % i == 0) {
                 possibleCutsY.add(i);
             }
         }
+        possibleCutsY.add(inputImage.getHeight());
+
     }
 }
