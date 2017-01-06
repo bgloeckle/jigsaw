@@ -32,13 +32,13 @@ import com.github.bgloeckle.jigsaw.util.Pair;
  *
  * @author Bastian Gloeckle
  */
-public class Judge {
+public class FullJudge {
     private Image img;
     private Double result = null;
     private Map<Pair<Integer, Integer>, Integer> edgeByPosition = new HashMap<>();
     private int nextEdgeId = 0;
 
-    public Judge(Image edgeImg) {
+    public FullJudge(Image edgeImg) {
         this.img = edgeImg;
     }
 

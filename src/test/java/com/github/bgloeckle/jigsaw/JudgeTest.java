@@ -49,7 +49,7 @@ public class JudgeTest {
         ArrayBasedImage img = new ArrayBasedImage(ArrayUtil.transpose(color), ArrayUtil.transpose(direction));
 
         // WHEN
-        double res = new Judge(img).judge();
+        double res = new FullJudge(img).judge();
 
         // THEN
         Assert.assertEquals("Expected correct judge result", 16. / 1., res, 1e-4);
@@ -74,7 +74,7 @@ public class JudgeTest {
         ArrayBasedImage img = new ArrayBasedImage(ArrayUtil.transpose(color), ArrayUtil.transpose(direction));
 
         // WHEN
-        double res = new Judge(img).judge();
+        double res = new FullJudge(img).judge();
 
         // THEN
         Assert.assertEquals("Expected correct judge result", 16. / 2., res, 1e-4);
@@ -99,7 +99,7 @@ public class JudgeTest {
         ArrayBasedImage img = new ArrayBasedImage(ArrayUtil.transpose(color), ArrayUtil.transpose(direction));
 
         // WHEN
-        double res = new Judge(img).judge();
+        double res = new FullJudge(img).judge();
 
         // THEN
         Assert.assertEquals("Expected correct judge result", 16. / 1., res, 1e-4);
@@ -124,7 +124,7 @@ public class JudgeTest {
         ArrayBasedImage img = new ArrayBasedImage(ArrayUtil.transpose(color), ArrayUtil.transpose(direction));
 
         // WHEN
-        double res = new Judge(img).judge();
+        double res = new FullJudge(img).judge();
 
         // THEN
         Assert.assertEquals("Expected correct judge result", 16. / 2., res, 1e-4);
@@ -149,7 +149,7 @@ public class JudgeTest {
         ArrayBasedImage img = new ArrayBasedImage(ArrayUtil.transpose(color), ArrayUtil.transpose(direction));
 
         // WHEN
-        double res = new Judge(img).judge();
+        double res = new FullJudge(img).judge();
 
         // THEN
         Assert.assertEquals("Expected correct judge result", 16. / 3., res, 1e-4);
@@ -174,7 +174,7 @@ public class JudgeTest {
         ArrayBasedImage img = new ArrayBasedImage(ArrayUtil.transpose(color), ArrayUtil.transpose(direction));
 
         // WHEN
-        double res = new Judge(img).judge();
+        double res = new FullJudge(img).judge();
 
         // THEN
         Assert.assertEquals("Expected correct judge result", 16. / 3., res, 1e-4);
@@ -201,7 +201,7 @@ public class JudgeTest {
         ArrayBasedImage img = new ArrayBasedImage(ArrayUtil.transpose(color), ArrayUtil.transpose(direction));
 
         // WHEN
-        double res = new Judge(img).judge();
+        double res = new FullJudge(img).judge();
 
         // THEN
         Assert.assertEquals("Expected correct judge result", 16. / 3., res, 1e-4);

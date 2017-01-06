@@ -9,3 +9,7 @@ jigsaw contains the following third party libraries which are available under th
   * https://github.com/tdunning/t-digest
   * Apache 2.0 License
   * Author: Ted Dunning
+* guava
+  * https://github.com/google/guava
+  * Apache 2.0 License
+  * Author: The Guava Authors
