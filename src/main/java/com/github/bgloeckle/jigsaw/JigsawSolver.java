@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.bgloeckle.jigsaw.assembly.AssemblyJigsaw;
 import com.github.bgloeckle.jigsaw.cutjudge.EdgeCutJudge;
 import com.github.bgloeckle.jigsaw.image.AwtImageIo;
 import com.github.bgloeckle.jigsaw.image.Image;
@@ -55,6 +57,7 @@ public class JigsawSolver {
     private static final Comparator<Pair<Integer, Double>> CUT_JUDGE_COMPARATOR_HIGHEST_FRONT = (l,
                     r) -> -l.getRight().compareTo(r.getRight());
     private static final double CUT_JUDGE_BATCH_PERCENT = .85;
+    private static final double ASSEMBLY_STITCH_PERCENT = .85;
 
     /**
      * Use this many pixels before/after a cut position to also judge cuts at those positions. This is needed since the
@@ -128,6 +131,16 @@ public class JigsawSolver {
         // Now we have a set of cuts of which we'd like to try all combinations of:
         logger.info("Identified following x/y values to cut the image. All {} combinations will be evaluated: x={}, y={}",
                         cutsToInspectX.size() * cutsToInspectY.size(), cutsToInspectX, cutsToInspectY);
+
+        @SuppressWarnings("unchecked")
+        Set<List<Integer>> allCutVariants = Sets.cartesianProduct(cutsToInspectX, cutsToInspectY);
+        for (List<Integer> variant : allCutVariants) {
+            int cutEveryX = variant.get(0);
+            int cutEveryY = variant.get(1);
+            logger.info("Inspecting variant to cut image every ({}/{})", cutEveryX, cutEveryY);
+            AssemblyJigsaw assemblyJigsaw = new AssemblyJigsaw(inputEdgeImage, cutEveryX, cutEveryY);
+            assemblyJigsaw.findBestAssemblies(ASSEMBLY_STITCH_PERCENT);
+        }
     }
 
     private NavigableSet<Pair<Integer, Double>> findPossibleCutsAndJudgeThem(Image inputImage, int dimensionMax,

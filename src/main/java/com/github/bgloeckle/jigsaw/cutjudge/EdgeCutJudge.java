@@ -103,6 +103,7 @@ public class EdgeCutJudge implements CutJudge {
 
         return (numberOfBrokenConnections - numberOfValidConnections)
                         / ((double) numberOfBrokenConnections + numberOfValidConnections);
+        // TODO: add factor of "cutting along an edge"
     }
 
     private boolean isValidHaloPosition(Pair<Integer, Integer> pos) {
