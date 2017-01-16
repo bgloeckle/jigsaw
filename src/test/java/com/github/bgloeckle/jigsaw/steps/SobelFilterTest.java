@@ -34,7 +34,6 @@ import com.github.bgloeckle.jigsaw.pipeline.Pipeline;
 import com.github.bgloeckle.jigsaw.steps.GaussianBlur;
 import com.github.bgloeckle.jigsaw.steps.SobelFilter;
 import com.github.bgloeckle.jigsaw.steps.ToSimpleLuminosityGreyscale;
-import com.github.bgloeckle.jigsaw.testutil.FromSimpleLuminosityGreyscale;
 import com.github.bgloeckle.jigsaw.testutil.TestImageAssert;
 
 public class SobelFilterTest {

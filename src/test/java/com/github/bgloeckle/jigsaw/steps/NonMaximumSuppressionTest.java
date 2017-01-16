@@ -35,7 +35,6 @@ import com.github.bgloeckle.jigsaw.steps.GaussianBlur;
 import com.github.bgloeckle.jigsaw.steps.NonMaximumSuppression;
 import com.github.bgloeckle.jigsaw.steps.SobelFilter;
 import com.github.bgloeckle.jigsaw.steps.ToSimpleLuminosityGreyscale;
-import com.github.bgloeckle.jigsaw.testutil.FromSimpleLuminosityGreyscale;
 import com.github.bgloeckle.jigsaw.testutil.TestImageAssert;
 
 public class NonMaximumSuppressionTest {

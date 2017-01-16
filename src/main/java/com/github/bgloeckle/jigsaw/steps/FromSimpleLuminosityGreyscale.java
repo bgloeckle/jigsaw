@@ -18,7 +18,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.github.bgloeckle.jigsaw.testutil;
+package com.github.bgloeckle.jigsaw.steps;
 
 import java.awt.image.BufferedImage;
 
@@ -73,7 +73,9 @@ public class FromSimpleLuminosityGreyscale implements Step {
                 t.setColor(x, y, rgb);
             }
         }
-        ((AwtImageAdapter) t).setBufferedImageType(BufferedImage.TYPE_INT_RGB);
+        if (t instanceof AwtImageAdapter) {
+            ((AwtImageAdapter) t).setBufferedImageType(BufferedImage.TYPE_INT_RGB);
+        }
     }
 
 }

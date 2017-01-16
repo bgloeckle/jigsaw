@@ -1,3 +1,23 @@
+/**
+ * jigsaw: Solve image jigsaws.
+ *
+ * Copyright (C) 2016, 2017 Bastian Gloeckle
+ *
+ * This file is part of jigsaw.
+ *
+ * diqube is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package com.github.bgloeckle.jigsaw.assembly;
 
 import java.util.Map.Entry;
@@ -20,9 +40,20 @@ public class Assembly implements Image {
 
     private NavigableMap<Integer, NavigableMap<Integer, Tile>> tiles = new TreeMap<>();
 
-    /* package */ Assembly(Image origImage, NavigableMap<Integer, NavigableMap<Integer, Tile>> tiles) {
+    public Assembly(Image origImage, NavigableMap<Integer, NavigableMap<Integer, Tile>> tiles) {
         this.origImg = origImage;
         this.tiles = tiles;
+    }
+
+    public Assembly(Image origImage, Assembly other) {
+        this.origImg = origImage;
+        this.tiles = new TreeMap<>();
+        for (Entry<Integer, NavigableMap<Integer, Tile>> e : other.tiles.entrySet()) {
+            tiles.put(e.getKey(), new TreeMap<>());
+            for (Entry<Integer, Tile> e2 : e.getValue().entrySet()) {
+                tiles.get(e.getKey()).put(e2.getKey(), new Tile(origImage, e2.getValue()));
+            }
+        }
     }
 
     private Pair<Tile, Pair<Integer, Integer>> findTile(int x, int y) {

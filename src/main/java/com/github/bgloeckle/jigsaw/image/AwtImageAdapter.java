@@ -29,12 +29,14 @@ public class AwtImageAdapter implements Image {
     private double[][] direction;
     private int[][] color;
     private transient int bufferedImageType;
+    private BufferedImage origBufferedImage;
 
     public AwtImageAdapter(BufferedImage img) {
         importFrom(img);
     }
 
     public AwtImageAdapter(AwtImageAdapter other) {
+        origBufferedImage = other.origBufferedImage;
         color = new int[other.color.length][other.color[0].length];
         for (int x = 0; x < color.length; x++) {
             for (int y = 0; y < color[0].length; y++) {
@@ -80,20 +82,13 @@ public class AwtImageAdapter implements Image {
         return color[0].length;
     }
 
-    public BufferedImage toBufferedImage() {
-        BufferedImage res = new BufferedImage(color.length, color[0].length, bufferedImageType);
-        for (int x = 0; x < color.length; x++) {
-            for (int y = 0; y < color[0].length; y++) {
-                res.setRGB(x, y, color[x][y]);
-            }
-        }
-        return res;
-    }
+
 
     /**
      * Import from a {@link BufferedImage}. Note: the directions of the pixels will be {@link Image#DIRECTION_UNDEFINED}
      */
     public void importFrom(BufferedImage img) {
+        origBufferedImage = img;
         color = new int[img.getWidth()][img.getHeight()];
         bufferedImageType = img.getType();
         for (int x = 0; x < img.getWidth(); x++) {
@@ -139,5 +134,9 @@ public class AwtImageAdapter implements Image {
         if (!Arrays.deepEquals(direction, other.direction))
             return false;
         return true;
+    }
+
+    public BufferedImage getOrigBufferedImage() {
+        return origBufferedImage;
     }
 }

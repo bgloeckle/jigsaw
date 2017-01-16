@@ -45,7 +45,7 @@ public class ToSimpleLuminosityGreyscale implements Step {
     @Override
     public void accept(Image t) {
         logger.info("Converting to simple luminosity greyscale");
-        BufferedImage img = ((AwtImageAdapter) t).toBufferedImage();
+        BufferedImage img = ((AwtImageAdapter) t).getOrigBufferedImage();
 
         int maxColor = 0;
 

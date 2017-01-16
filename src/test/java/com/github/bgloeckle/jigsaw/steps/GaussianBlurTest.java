@@ -33,7 +33,6 @@ import com.github.bgloeckle.jigsaw.image.Image;
 import com.github.bgloeckle.jigsaw.pipeline.Pipeline;
 import com.github.bgloeckle.jigsaw.steps.GaussianBlur;
 import com.github.bgloeckle.jigsaw.steps.ToSimpleLuminosityGreyscale;
-import com.github.bgloeckle.jigsaw.testutil.FromSimpleLuminosityGreyscale;
 import com.github.bgloeckle.jigsaw.testutil.TestImageAssert;
 
 public class GaussianBlurTest {

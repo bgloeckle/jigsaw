@@ -20,9 +20,12 @@
  */
 package com.github.bgloeckle.jigsaw;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -36,7 +39,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.bgloeckle.jigsaw.assembly.AssemblyJigsaw;
+import com.github.bgloeckle.jigsaw.assembly.Assembly;
+import com.github.bgloeckle.jigsaw.assembly.jigsaw.AssemblyJigsaw;
 import com.github.bgloeckle.jigsaw.cutjudge.EdgeCutJudge;
 import com.github.bgloeckle.jigsaw.image.AwtImageIo;
 import com.github.bgloeckle.jigsaw.image.Image;
@@ -58,6 +62,7 @@ public class JigsawSolver {
                     r) -> -l.getRight().compareTo(r.getRight());
     private static final double CUT_JUDGE_BATCH_PERCENT = .85;
     private static final double ASSEMBLY_STITCH_PERCENT = .85;
+    private static final double MIN_NUMBER_OF_PIXELS_OF_TILES = 5.;
 
     /**
      * Use this many pixels before/after a cut position to also judge cuts at those positions. This is needed since the
@@ -134,19 +139,29 @@ public class JigsawSolver {
 
         @SuppressWarnings("unchecked")
         Set<List<Integer>> allCutVariants = Sets.cartesianProduct(cutsToInspectX, cutsToInspectY);
+        allCutVariants = new HashSet<>(Arrays.asList(new ArrayList<>(Arrays.asList(200, 195))));
+
+        Set<Assembly> allAssemblies = new HashSet<>();
+
         for (List<Integer> variant : allCutVariants) {
             int cutEveryX = variant.get(0);
             int cutEveryY = variant.get(1);
             logger.info("Inspecting variant to cut image every ({}/{})", cutEveryX, cutEveryY);
             AssemblyJigsaw assemblyJigsaw = new AssemblyJigsaw(inputEdgeImage, cutEveryX, cutEveryY);
-            assemblyJigsaw.findBestAssemblies(ASSEMBLY_STITCH_PERCENT);
+            allAssemblies.addAll(assemblyJigsaw.findBestAssemblies(ASSEMBLY_STITCH_PERCENT));
         }
+
+        logger.info("Writing result file '{}'", outputFile.getAbsoluteFile());
+
+        Assembly assembly = new Assembly(inputImage, allAssemblies.iterator().next());
+        new AwtImageIo().writeImage(assembly, BufferedImage.TYPE_INT_RGB,
+                        outputFile.getAbsolutePath());
     }
 
     private NavigableSet<Pair<Integer, Double>> findPossibleCutsAndJudgeThem(Image inputImage, int dimensionMax,
                     Function<Integer, Double> judgeFn) {
         NavigableSet<Pair<Integer, Double>> res = new TreeSet<>(CUT_JUDGE_COMPARATOR_HIGHEST_FRONT);
-        for (int divisor = 2; (double) dimensionMax / divisor >= 5.; divisor++) {
+        for (int divisor = 2; (double) dimensionMax / divisor >= MIN_NUMBER_OF_PIXELS_OF_TILES; divisor++) {
             int value = (int) Math.round((double) dimensionMax / divisor);
             for (int delta = -POSSIBLE_CUTS_HALO; delta <= POSSIBLE_CUTS_HALO; delta++) {
                 if (value + delta >= 2 && value + delta < dimensionMax - 1) {

@@ -116,7 +116,7 @@ public class EdgeTrackingByDoubleThreshold implements Step {
         if (numberOfPixelsTotal > 100_000) {
             // let's sample the pixels.
             Set<Pair<Integer, Integer>> colorIndices = new HashSet<>();
-            while (colorIndices.size() < 1_000 || colorIndices.size() < numberOfPixelsTotal / 1_000) {
+            while (colorIndices.size() < 1_000 || colorIndices.size() < numberOfPixelsTotal / 100) {
                 colorIndices.add(new Pair<>(randomProvider.provideRandomInt(i.getWidth()),
                                 randomProvider.provideRandomInt(i.getHeight())));
             }

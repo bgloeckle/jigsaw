@@ -21,6 +21,7 @@
 package com.github.bgloeckle.jigsaw.image;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,16 +60,32 @@ public class AwtImageIo {
      * {@link BufferedImage} expects!
      */
     public void writeImage(Image img, String fileLocation) {
-        if (!(img instanceof AwtImageAdapter)) {
-            logger.error("Wrong image type: {}", img.getClass().getName());
-            return;
-        }
+        writeImage(img, BufferedImage.TYPE_INT_RGB, fileLocation);
+    }
 
-        BufferedImage bufImg = ((AwtImageAdapter) img).toBufferedImage();
+    public void writeImage(Image img, int awtImageType, String fileLocation) {
+        BufferedImage bufImg = toBufferedImage(img, awtImageType);
         try {
             ImageIO.write(bufImg, "png", new File(fileLocation));
         } catch (IOException e) {
             logger.error("Could not write to '{}'", fileLocation, e);
         }
+    }
+
+
+    public BufferedImage toBufferedImage(Image img, int awtImageType) {
+        BufferedImage res = new BufferedImage(img.getWidth(), img.getHeight(), awtImageType);
+        WritableRaster raster = res.getRaster();
+        for (int x = 0; x < img.getWidth(); x++) {
+            for (int y = 0; y < img.getHeight(); y++) {
+                // int color = img.getColor(x, y);
+                // int red = (color >> 16) & 0xff;
+                // int green = (color >> 8) & 0xff;
+                // int blue = color & 0xff;
+                // raster.setPixel(x, y, new int[] { red, green, blue, 0xFF });
+                res.setRGB(x, y, img.getColor(x, y));
+            }
+        }
+        return res;
     }
 }
