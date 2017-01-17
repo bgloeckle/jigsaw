@@ -56,7 +56,8 @@ public class AssemblyJigsaw {
 
     private static final double TILE_BORDER_MATCH_COUNT_DIFF_PERCENT = .2;
 
-    private static final JigsawSolverStrategy SOLVER_STRATEGY = new GreedyJigsawSolverStrategy();
+    // private static final JigsawSolverStrategy SOLVER_STRATEGY = new GreedyJigsawSolverStrategy();
+    private static final JigsawSolverStrategy SOLVER_STRATEGY = new ColorCodingJigsawSolverStrategy();
 
     private Image origImg;
     private int cutEveryX;
@@ -196,7 +197,7 @@ public class AssemblyJigsaw {
                         int c = workBitSet.cardinality();
                         if (c <= maxEdgeCountDiff) {
                             Pair<TileInfo, Double> r = new Pair<>(interestingTile,
-                                            (double) (maxEdgeCountDiff - Math.abs(cardinality - delta)));
+                                            (double) (maxEdgeCountDiff - absDelta));
                             // logger.trace("Found neighbour of {}: {}", t, r);
                             resConsumer.accept(r);
                         } else {

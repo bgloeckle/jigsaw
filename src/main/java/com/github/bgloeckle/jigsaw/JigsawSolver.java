@@ -151,11 +151,13 @@ public class JigsawSolver {
             allAssemblies.addAll(assemblyJigsaw.findBestAssemblies(ASSEMBLY_STITCH_PERCENT));
         }
 
-        logger.info("Writing result file '{}'", outputFile.getAbsoluteFile());
-
-        Assembly assembly = new Assembly(inputImage, allAssemblies.iterator().next());
-        new AwtImageIo().writeImage(assembly, BufferedImage.TYPE_INT_RGB,
-                        outputFile.getAbsolutePath());
+        int nextFileId = 0;
+        for (Assembly a : allAssemblies) {
+            String outFileName = outputFile.getAbsolutePath() + "-" + nextFileId + ".png";
+            logger.info("Writing result file '{}'", outFileName);
+            new AwtImageIo().writeImage(new Assembly(inputImage, a), BufferedImage.TYPE_INT_RGB, outFileName);
+            nextFileId++;
+        }
     }
 
     private NavigableSet<Pair<Integer, Double>> findPossibleCutsAndJudgeThem(Image inputImage, int dimensionMax,

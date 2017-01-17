@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
@@ -35,11 +36,16 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.github.bgloeckle.jigsaw.assembly.Assembly;
 import com.github.bgloeckle.jigsaw.assembly.Tile;
 import com.github.bgloeckle.jigsaw.image.Image;
 import com.github.bgloeckle.jigsaw.util.Pair;
+import com.google.common.collect.Sets;
 
 /**
  * Simple {@link JigsawSolverStrategy} which simply takes the best fitting edges and uses them until the whole image is
@@ -48,6 +54,7 @@ import com.github.bgloeckle.jigsaw.util.Pair;
  * @author Bastian Gloeckle
  */
 public class GreedyJigsawSolverStrategy implements JigsawSolverStrategy {
+    private static final Logger logger = LoggerFactory.getLogger(GreedyJigsawSolverStrategy.class);
 
     private enum Orientation {
         NORTH_SOUTH, EAST_WEST
@@ -93,13 +100,13 @@ public class GreedyJigsawSolverStrategy implements JigsawSolverStrategy {
         // new Pair<>(new Pair<>(source, p.getLeft()), Orientation.NORTH_SOUTH))));
         // }
 
-        for (TileInfo t : graph) {
-            retainFirstOnly(t.getNextBottom());
-            retainFirstOnly(t.getNextTop());
-            retainFirstOnly(t.getNextRight());
-            retainFirstOnly(t.getNextLeft());
-        }
-
+        // for (TileInfo t : graph) {
+        // retainFirstOnly(t.getNextBottom());
+        // retainFirstOnly(t.getNextTop());
+        // retainFirstOnly(t.getNextRight());
+        // retainFirstOnly(t.getNextLeft());
+        // }
+        //
         for (TileInfo t : graph) {
             removeUnmatchedLink(t, i -> i.getNextBottom());
             removeUnmatchedLink(t, i -> i.getNextTop());
@@ -107,52 +114,63 @@ public class GreedyJigsawSolverStrategy implements JigsawSolverStrategy {
             removeUnmatchedLink(t, i -> i.getNextRight());
         }
 
-        TileInfo[][] board = new TileInfo[tileCountWidth][tileCountHeight];
+        Set<Assembly> res = new HashSet<>();
 
-        TileInfo startTile = null;
-        for (TileInfo t : graph) {
-            if (t.getNextLeft().isEmpty() && t.getNextTop().isEmpty()) {
-                startTile = t;
-                break;
-            }
-        }
+        Set<Pair<TileInfo, Pair<Integer, Integer>>> startTiles = new HashSet<>();
 
-        if (startTile == null) {
-            return new HashSet<>();
-        }
+        // top left
+        startTiles.addAll(graph.stream().filter(t -> t.getNextLeft().isEmpty() && t.getNextTop().isEmpty())
+                        .map(t -> new Pair<>(t, new Pair<>(0, 0))).collect(Collectors.toSet()));
+        // lower left
+        startTiles.addAll(graph.stream().filter(t -> t.getNextLeft().isEmpty() && t.getNextBottom().isEmpty())
+                        .map(t -> new Pair<>(t, new Pair<>(0, tileCountHeight - 1))).collect(Collectors.toSet()));
+        // top right
+        startTiles.addAll(graph.stream().filter(t -> t.getNextRight().isEmpty() && t.getNextTop().isEmpty())
+                        .map(t -> new Pair<>(t, new Pair<>(tileCountWidth - 1, 0))).collect(Collectors.toSet()));
+        // lower right
+        startTiles.addAll(graph.stream().filter(t -> t.getNextRight().isEmpty() && t.getNextBottom().isEmpty())
+                        .map(t -> new Pair<>(t, new Pair<>(tileCountWidth - 1, tileCountHeight - 1)))
+                        .collect(Collectors.toSet()));
 
-        board[0][0] = startTile;
-        Set<TileInfo> visited = new HashSet<>();
-        visited.add(startTile);
-        fillAll(board, 0, 0, visited, tileCountWidth, tileCountHeight);
+        for (Pair<TileInfo, Pair<Integer, Integer>> startTilePair : startTiles) {
+            TileInfo[][] board = new TileInfo[tileCountWidth][tileCountHeight];
 
-        // fill up with tiles that did not have good edges
-        if (visited.size() != graph.size()) {
-            graph.removeAll(visited);
-            Iterator<TileInfo> it = graph.iterator();
+            TileInfo startTile = startTilePair.getLeft();
+            Pair<Integer, Integer> startTilePos = startTilePair.getRight();
+            board[startTilePos.getLeft()][startTilePos.getRight()] = startTile;
+            Set<TileInfo> visited = new HashSet<>();
 
-            for (int x = 0; x < tileCountWidth; x++) {
-                for (int y = 0; y < tileCountHeight; y++) {
-                    if (board[x][y] == null) {
-                        board[x][y] = it.next();
+            fillAll(board, startTilePos.getLeft(), startTilePos.getRight(), visited, tileCountWidth, tileCountHeight);
+
+            // fill up with tiles that did not have good edges
+            if (visited.size() != graph.size()) {
+                Set<TileInfo> remaining = Sets.difference(new HashSet<>(graph), visited);
+                Iterator<TileInfo> it = remaining.iterator();
+
+                logger.debug("Need to fill up {} unset fields on board when using the following tile on {}: {}",
+                                remaining.size(), startTilePos, startTile);
+                for (int x = 0; x < tileCountWidth; x++) {
+                    for (int y = 0; y < tileCountHeight; y++) {
+                        if (board[x][y] == null) {
+                            board[x][y] = it.next();
+                        }
                     }
                 }
             }
-        }
 
-        int tileHeight = board[0][0].getTile().getHeight();
-        int tileWidth = board[0][0].getTile().getWidth();
+            int tileHeight = board[0][0].getTile().getHeight();
+            int tileWidth = board[0][0].getTile().getWidth();
 
-        NavigableMap<Integer, NavigableMap<Integer, Tile>> tiles = new TreeMap<>();
-        for (int x = 0; x < tileCountWidth; x++) {
-            tiles.put(x * tileWidth, new TreeMap<>());
-            for (int y = 0; y < tileCountHeight; y++) {
-                tiles.get(x * tileWidth).put(y * tileHeight, board[x][y].getTile());
+            NavigableMap<Integer, NavigableMap<Integer, Tile>> tiles = new TreeMap<>();
+            for (int x = 0; x < tileCountWidth; x++) {
+                tiles.put(x * tileWidth, new TreeMap<>());
+                for (int y = 0; y < tileCountHeight; y++) {
+                    tiles.get(x * tileWidth).put(y * tileHeight, board[x][y].getTile());
+                }
             }
-        }
 
-        Set<Assembly> res = new HashSet<>();
-        res.add(new Assembly(origImage, tiles));
+            res.add(new Assembly(origImage, tiles));
+        }
         return res;
 
     }
@@ -207,7 +225,41 @@ public class GreedyJigsawSolverStrategy implements JigsawSolverStrategy {
             }
         }
 
-        fillAll(board, curX + 1, curY + 1, visited, tileCountWidth, tileCountHeight);
+        if (curX < board.length - 1 && curY < board[0].length - 1) {
+            Map<TileInfo, Double> leftTiles;
+            if (board[curX][curY + 1] != null) {
+                leftTiles = board[curX][curY + 1].getNextRight().stream()
+                                .collect(Collectors.toMap(p -> p.getLeft(), p -> p.getRight()));
+            } else {
+                leftTiles = new HashMap<>();
+            }
+
+            Map<TileInfo, Double> topTiles;
+            if (board[curX + 1][curY] != null) {
+                topTiles = board[curX + 1][curY].getNextBottom().stream()
+                                .collect(Collectors.toMap(p -> p.getLeft(), p -> p.getRight()));
+            } else {
+                topTiles = new HashMap<>();
+            }
+
+            NavigableMap<Double, TileInfo> maxJudgementMap = new TreeMap<>((d1, d2) -> -d1.compareTo(d2));
+            for (TileInfo t : Sets.union(leftTiles.keySet(), topTiles.keySet())) {
+                double judgement = 0.;
+                if (leftTiles.containsKey(t)) {
+                    judgement += leftTiles.get(t);
+                }
+                if (topTiles.containsKey(t)) {
+                    judgement += topTiles.get(t);
+                }
+                maxJudgementMap.put(judgement, t);
+            }
+
+            if (!maxJudgementMap.isEmpty()) {
+                TileInfo nextTile = maxJudgementMap.firstEntry().getValue();
+                board[curX + 1][curY + 1] = nextTile;
+                fillAll(board, curX + 1, curY + 1, visited, tileCountWidth, tileCountHeight);
+            }
+        }
     }
 
     private void retainFirstOnly(NavigableSet<?> s) {
@@ -216,7 +268,7 @@ public class GreedyJigsawSolverStrategy implements JigsawSolverStrategy {
         }
     }
 
-    private void removeUnmatchedLink(TileInfo t, Function<TileInfo, NavigableSet<Pair<TileInfo, Double>> > setFn) {
+    private void removeUnmatchedLink(TileInfo t, Function<TileInfo, NavigableSet<Pair<TileInfo, Double>>> setFn) {
         if (!setFn.apply(t).isEmpty()) {
             TileInfo other = setFn.apply(t).first().getLeft();
             if (!setFn.apply(other).isEmpty()) {

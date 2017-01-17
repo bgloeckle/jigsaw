@@ -73,15 +73,16 @@ public class ColorCodingJigsawSolverStrategy implements JigsawSolverStrategy {
                 fillLeftSide(board, y, visited, () -> {
                     logger.debug("Inspecting possibilities with left side: {}", IntStream.range(0, board[0].length)
                                     .mapToObj(ty -> board[0][ty]).collect(Collectors.toList()));
-                    // for (Pair<TileInfo, Double> p : board[0][0].getNextRight()) {
-                    // if (!visited.contains(p.getLeft())) {
-                    // board[1][0] = p.getLeft();
-                    // findAllPossibleSolutions(board, 1, 0, visited, 0., solutionPair -> {
-                    // System.out.println("Found new solution: " + solutionPair);
-                    // });
-                    // board[1][0] = null;
-                    // }
-                    // }
+                    for (Pair<TileInfo, Double> p : board[0][0].getNextRight()) {
+                        if (!visited.contains(p.getLeft())) {
+                            board[1][0] = p.getLeft();
+                            findAllPossibleSolutions(board, 1, 0, visited, 0., tileCountWidth, tileCountHeight,
+                                            solutionPair -> {
+                                                System.out.println("Found new solution: " + solutionPair);
+                                            });
+                            board[1][0] = null;
+                        }
+                    }
                 });
                 board[0][y] = null;
             }

@@ -32,8 +32,8 @@ import com.github.bgloeckle.jigsaw.colorcoding.Vertex;
 import com.github.bgloeckle.jigsaw.util.Pair;
 
 class TileInfo implements Vertex {
-    private static final Comparator<Pair<?, Double>> COMPARATOR_LOWEST_FRONT = (l, r) -> l.getRight()
-                    .compareTo(r.getRight());
+    private static final Comparator<Pair<?, Double>> COMPARATOR_HIGHEST_FRONT = (l,
+                    r) -> -l.getRight().compareTo(r.getRight());
 
     private Tile tile;
 
@@ -42,10 +42,10 @@ class TileInfo implements Vertex {
     private BitSet leftBorder;
     private BitSet rightBorder;
 
-    private NavigableSet<Pair<TileInfo, Double>> nextTop = new TreeSet<>(COMPARATOR_LOWEST_FRONT);
-    private NavigableSet<Pair<TileInfo, Double>> nextLeft = new TreeSet<>(COMPARATOR_LOWEST_FRONT);
-    private NavigableSet<Pair<TileInfo, Double>> nextBottom = new TreeSet<>(COMPARATOR_LOWEST_FRONT);
-    private NavigableSet<Pair<TileInfo, Double>> nextRight = new TreeSet<>(COMPARATOR_LOWEST_FRONT);
+    private NavigableSet<Pair<TileInfo, Double>> nextTop = new TreeSet<>(COMPARATOR_HIGHEST_FRONT);
+    private NavigableSet<Pair<TileInfo, Double>> nextLeft = new TreeSet<>(COMPARATOR_HIGHEST_FRONT);
+    private NavigableSet<Pair<TileInfo, Double>> nextBottom = new TreeSet<>(COMPARATOR_HIGHEST_FRONT);
+    private NavigableSet<Pair<TileInfo, Double>> nextRight = new TreeSet<>(COMPARATOR_HIGHEST_FRONT);
 
     // private int maxWidthRightStartingThisTile = -1;
 
