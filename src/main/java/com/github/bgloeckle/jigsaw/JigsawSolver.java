@@ -24,8 +24,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -139,7 +137,7 @@ public class JigsawSolver {
 
         @SuppressWarnings("unchecked")
         Set<List<Integer>> allCutVariants = Sets.cartesianProduct(cutsToInspectX, cutsToInspectY);
-        allCutVariants = new HashSet<>(Arrays.asList(new ArrayList<>(Arrays.asList(200, 195))));
+        // allCutVariants = new HashSet<>(Arrays.asList(new ArrayList<>(Arrays.asList(200, 195))));
 
         Set<Assembly> allAssemblies = new HashSet<>();
 
