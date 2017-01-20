@@ -38,19 +38,19 @@ import org.slf4j.LoggerFactory;
 import com.github.bgloeckle.jigsaw.util.Pair;
 
 /**
- * Color-coding graphs in order to find simple paths inside it that have a specific minimum length.
+ * Color-coding graphs in order to find simple paths inside it that have a specific minimum length, being only
+ * exponential in that minimum length, not in the number of vertices.
  * 
  * <p>
  * This class is based on the algorithm proposed by Noga Alon, Raphy Yuster and Uri Zwick in "Color-coding: a new method
  * for finding simple paths, cycles and other small subgraphs within large graphs" (1994).
  * 
- * See also https://en.wikipedia.org/wiki/Color-coding.
+ * See also https://en.wikipedia.org/wiki/Color-coding
  * 
  * @author Bastian Gloeckle
  */
 public class ColorCoding<V extends Vertex> {
     private static final Logger logger = LoggerFactory.getLogger(ColorCoding.class);
-    private static final int NO_OP_K_GREATER_THAN = 10;
 
     private Collection<V> inGraph;
 
@@ -59,10 +59,6 @@ public class ColorCoding<V extends Vertex> {
     }
 
     public Set<V> findVerticesWithLengthGreater(int k) {
-        if (k > NO_OP_K_GREATER_THAN) {
-            return null;
-        }
-
         Supplier<Integer> nextIdSupplier = new Supplier<Integer>() {
             int nextId = 0;
 

@@ -53,9 +53,7 @@ public class ColorCodingJigsawSolverStrategy implements JigsawSolverStrategy {
         ColorCoding<TileInfo> colorCoding = new ColorCoding<>(graph);
         Set<TileInfo> potentialLeftTiles = colorCoding.findVerticesWithLengthGreater(tileCountWidth);
 
-        if (potentialLeftTiles.size() < tileCountHeight)
-
-        {
+        if (potentialLeftTiles.size() < tileCountHeight) {
             logger.warn("Did not find enough tiles that could potentially be placed on the left border. Found {} but need {}.",
                             potentialLeftTiles.size(), tileCountHeight);
             return new HashSet<>();
@@ -168,9 +166,9 @@ public class ColorCodingJigsawSolverStrategy implements JigsawSolverStrategy {
             Set<TileInfo> rightSet = board[curX - 1][curY + 1].getNextRight().stream().map(p -> p.getLeft())
                             .collect(Collectors.toSet());
             Set<TileInfo> possibleTiles = Sets.difference(Sets.intersection(bottomSet, rightSet), visited);
-            // if (!possibleTiles.isEmpty()) {
-            // logger.debug("Will try {} variants advancing down", possibleTiles.size());
-            // }
+            if (!possibleTiles.isEmpty()) {
+                logger.debug("Will try {} variants advancing down", possibleTiles.size());
+            }
             for (TileInfo t : possibleTiles) {
                 board[curX][curY + 1] = t;
                 findAllPossibleSolutions(board, curX, curY + 1, visited, curJudgement, tileCountWidth, tileCountHeight,
